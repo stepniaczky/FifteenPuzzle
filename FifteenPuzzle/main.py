@@ -9,15 +9,11 @@ def save(filename: str, _dict: dict):
 
 
 def load(filename: str):
-    try:
-        with open(f"data/{filename}") as file:
-            return file.readlines()
-    except FileNotFoundError:
-        exit("File with initial board does not exist!")
+    with open(f"data/{filename}") as file:
+        return file.readlines()
 
 
 def main():
-    # args = [strategy, parameter, initial board file, results file, file with additional info]
     args = sys.argv[1:]
 
     if len(args) != 5:
