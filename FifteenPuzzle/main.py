@@ -2,6 +2,16 @@ import sys
 from check_args import check_args
 
 
+def strategy_choice(name: str):
+    match name:
+        case 'dfs':
+            return DFS()
+        case 'bfs':
+            return BFS()
+        case 'astr':
+            return ASTR()
+
+
 def save(filename: str, _dict: dict):
     with open(filename, 'w') as file:
         for key in _dict.keys():
@@ -17,19 +27,13 @@ def main():
     args = sys.argv[1:]
 
     if len(args) != 5:
-        exit("This script requires 5 positional arguments to start!")
+        quit("ArgumentError: This script requires 5 positional arguments to start!")
     elif check_args(args) is False:
-        exit()
+        quit()
     else:
         pass
         # board = Board(load(args[2]))
-        # match args[0]:
-        #     case 'dfs':
-        #         strategy = DFS()
-        #     case 'bfs':
-        #         strategy = BFS()
-        #     case 'astr':
-        #         strategy = ASTR()
+        # strategy = strategy_choice(args[0])
         # model = Strategy(board, args[0], args[1])
         # save(args[3], model.get_results)
         # save(args[4], model.get_info)

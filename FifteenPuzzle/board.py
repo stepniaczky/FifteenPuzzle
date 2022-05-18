@@ -1,31 +1,50 @@
 class Board:
 
     def __init__(self, initial: list):
-        self.r, self.c = initial[0].split()  # number of rows and columns
-        self.board = [list(row.split()) for row in initial[1:]]  # board list
-        self.check_size()
+        self.r, self.c = list(map(int, initial[0].split()))  # number of rows and columns
         self.SIZE = self.r * self.c  # number of elements in board
+        self.board = [list(map(int, row.split())) for row in initial[1:]]  # board list with integer values
+        self.check_dimensions()
+        self.check_elements()
 
     # checks if every row and column of the given initial board has the same length
     # as integers written in the first line of the initial board file [rows columns]
-    def check_size(self):
+    def check_dimensions(self):
         try:
-            for i, row in self.board:
-                assert len(row) == self.c, 'Given number of board columns is incorrect!'
-                assert i < self.r, 'Given number of board rows is incorrect!'
+            for i, row in enumerate(self.board):
+                assert len(row) == self.c, 'BoardError: Given number of board columns is incorrect!'
+                assert i < self.r, 'BoardError: Given number of board rows is incorrect!'
         # quit program with appropriate message if board dimensions are incorrect
         except AssertionError as msg:
-            exit(msg)
+            quit(msg)
+
+    # checks if every element of board is in range [0, 15]
+    # checks if board has not duplicates elements
+    def check_elements(self):
+        correct_values = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0,
+                          8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0}
+
+        try:
+            for row in self.board:
+                for col in row:
+                    assert col in correct_values.keys(), \
+                        'BoardError: Value of the board element is out of range [0, 15]!'
+                    correct_values[col] += 1
+                    assert correct_values[col] <= 1, 'BoardError: Board has duplicate element values!'
+        except AssertionError as msg:
+            quit(msg)
 
     # checks if board is solved correctly, which means that board elements
     # starts with 1 then iterates one by one to 15 and the last element of board equals 0
     # returns True if board is solved, else False
     def is_solved(self) -> bool:
         try:
-            for i, element in enumerate(self.board, start=1):
-                if i == self.SIZE - 1:
-                    assert element == 0
-                assert element == 1
+            for row_id, row in enumerate(self.board):
+                for i, element in enumerate(row, start=(row_id * 4 + 1)):
+                    if i == self.SIZE:
+                        assert element == 0
+                        break  # after checking all elements break and return True
+                    assert element == i
             return True
         except AssertionError:
             return False
@@ -44,10 +63,14 @@ class Board:
         try:
             match direction:
                 case 'U':
-                    b[row][col], b[row - 1][col] = b[row - 1][col], b[row][col]
-                case 'D':
                     b[row][col], b[row + 1][col] = b[row + 1][col], b[row][col]
+                case 'D':
+                    if row == 0:
+                        return False
+                    b[row][col], b[row - 1][col] = b[row - 1][col], b[row][col]
                 case 'R':
+                    if col == 0:
+                        return False
                     b[row][col], b[row][col - 1] = b[row][col - 1], b[row][col]
                 case 'L':
                     b[row][col], b[row][col + 1] = b[row][col + 1], b[row][col]

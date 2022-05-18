@@ -34,8 +34,8 @@ def check_args(args):
 
         # checks if initial board file exists in /data/ directory
         assert exists(f'data/{args[2]}'), \
-            f"File: '{args[2]}' with initial board does not exist in '/data/' directory!"
+            f"ArgumentError: File: '{args[2]}' with initial board does not exist in '/data/' directory!"
 
     # if anything went wrong, quits program with the appropriate message
     except AssertionError as msg:
-        exit(msg)
+        quit(msg)
