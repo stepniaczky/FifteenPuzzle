@@ -21,8 +21,11 @@ class Board:
     # checks if every element of board is in range [0, 15]
     # checks if board has not duplicates elements
     def check_elements(self):
-        correct_values = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0,
-                          8: 0, 9: 0, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0}
+        # dictionary in which keys stands for all elements that should exist in proper board
+        # and values stands for frequency of each element in test initial board (checking for duplicates)
+        correct_values = {}
+        for i in range(self.SIZE):
+            correct_values[i] = 0
 
         try:
             for row in self.board:
@@ -77,6 +80,15 @@ class Board:
                     b[row][col], b[row][col - 1] = b[row][col - 1], b[row][col]
                 case _:
                     return False
-            return b  # if IndexError exception has not occurred, return copy of board with given shift
+            return b  # if move passed correctly return copy of board with given shift
         except IndexError:
             return False
+
+    def __str__(self) -> str:
+        s = ''
+        for row in self.board:
+            for col in row:
+                s += f'  {col} ' if col < 10 else f' {col} '
+                if (col + 1) % 4 == 0:
+                    s += '\n'
+        return s
