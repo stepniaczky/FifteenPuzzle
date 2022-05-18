@@ -122,31 +122,31 @@ class BoardTestCase(unittest.TestCase):
 
     # tests moves that should return proper board copy
     def test_move_good(self):
-        b = Board(self.initial_board)
+        b = Board(self.initial_board)  # empty cell is in top left corner
         row, col = b.get_empty_cell()
 
-        b.board = b.move('U')
+        b.board = b.move('D')
         self.assertEqual(b.get_empty_cell(), (row + 1, col))
 
-        b.board = b.move('L')
+        b.board = b.move('R')
         self.assertEqual(b.get_empty_cell(), (row + 1, col + 1))
 
-        b.board = b.move('D')
+        b.board = b.move('U')
         self.assertEqual(b.get_empty_cell(), (row, col + 1))
 
-        b.board = b.move('R')
+        b.board = b.move('L')
         self.assertEqual(b.get_empty_cell(), (row, col))
 
     # tests moves that should return False
     def test_move_bad(self):
         b1 = Board(self.initial_board)  # top left corner ['4 4', '0 1 2 3', '4 5 6 7', '8 9 10 11', '12 13 14 15']
-        self.assertFalse(b1.move('D'))
-        self.assertFalse(b1.move('R'))
+        self.assertFalse(b1.move('U'))
+        self.assertFalse(b1.move('L'))
 
         bottom_right_corner = ['4 4', '1 2 3 4', '5 6 7 8', '9 10 11 12', '13 14 15 0']
         b2 = Board(bottom_right_corner)
-        self.assertFalse(b2.move('U'))
-        self.assertFalse(b2.move('L'))
+        self.assertFalse(b2.move('D'))
+        self.assertFalse(b2.move('R'))
 
 
 if __name__ == '__main__':

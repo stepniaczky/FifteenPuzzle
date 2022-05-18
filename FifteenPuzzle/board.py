@@ -55,7 +55,8 @@ class Board:
             if 0 in row:
                 return i, row.index(0)
 
-    # checks if move in given direction is possible, if so it returns copy of board with appropriate shift
+    # checks if moving empty cell in given direction is possible
+    # if so it returns copy of board with appropriate shift
     # if it is not possible, method returns False
     def move(self, direction: str) -> bool or list:
         b = self.board.copy()
@@ -63,17 +64,17 @@ class Board:
         try:
             match direction:
                 case 'U':
-                    b[row][col], b[row + 1][col] = b[row + 1][col], b[row][col]
-                case 'D':
                     if row == 0:
                         return False
                     b[row][col], b[row - 1][col] = b[row - 1][col], b[row][col]
+                case 'D':
+                    b[row][col], b[row + 1][col] = b[row + 1][col], b[row][col]
                 case 'R':
+                    b[row][col], b[row][col + 1] = b[row][col + 1], b[row][col]
+                case 'L':
                     if col == 0:
                         return False
                     b[row][col], b[row][col - 1] = b[row][col - 1], b[row][col]
-                case 'L':
-                    b[row][col], b[row][col + 1] = b[row][col + 1], b[row][col]
                 case _:
                     return False
             return b  # if IndexError exception has not occurred, return copy of board with given shift
