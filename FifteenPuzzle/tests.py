@@ -1,5 +1,79 @@
+from os import remove
 import unittest
 from board import Board
+from check_args import check_args
+
+
+class CheckArgsCase(unittest.TestCase):
+    proper_args = ['bfs', 'DLRU', 'test_board.txt', 'results.txt', 'info.txt']
+
+    def test_proper_strategy(self):
+        open(f'data/{self.proper_args[2]}', 'a').close()
+        self.assertIsNone(check_args(self.proper_args))
+        remove(f'data/{self.proper_args[2]}')
+
+    def test_wrong_strategy(self):
+        args = self.proper_args.copy()
+        args[0] = 'bffs'
+        with self.assertRaises(SystemExit) as e:
+            check_args(args)
+        self.assertEqual(e.exception.__str__(),
+                         "ArgumentError: First argument must equals one of: 'dfs', 'bfs' or 'astr'!")
+
+    def test_proper_parameters(self):
+        args = self.proper_args.copy()
+        open(f'data/{args[2]}', 'a').close()
+        self.assertIsNone(check_args(args))
+
+        args[0] = 'dfs'
+        self.assertIsNone(check_args(args))
+
+        args[0] = 'astr'
+        args[1] = 'hamm'
+        self.assertIsNone(check_args(args))
+        args[1] = 'manh'
+        self.assertIsNone(check_args(args))
+        remove(f'data/{args[2]}')
+
+    def check_wrong_parameters(self, args):
+        with self.assertRaises(SystemExit) as e:
+            check_args(args)
+        self.assertEqual(e.exception.__str__(),
+                         f"ArgumentError: Strategy: '{args[0]}' cannot be used with parameter: '{args[1]}'!")
+
+    def test_wrong_parameters(self):
+        args = self.proper_args.copy()
+        open(f'data/{args[2]}', 'a').close()
+        args[1] = 'manh'
+        self.check_wrong_parameters(args)
+
+        args[1] = 'hamm'
+        self.check_wrong_parameters(args)
+
+        args[0] = 'dfs'
+        self.check_wrong_parameters(args)
+
+        args[1] = 'bfs'
+        self.check_wrong_parameters(args)
+
+        args[0] = 'astr'
+        args[1] = 'LRDU'
+        self.check_wrong_parameters(args)
+        remove(f'data/{args[2]}')
+
+    def test_files_extension(self):
+        args = self.proper_args.copy()
+        args[2] = 'test_board.ttx'
+        with self.assertRaises(SystemExit) as e:
+            check_args(args)
+        self.assertEqual(e.exception.__str__(), f"ArgumentError: File name: '{args[2]}' must ends with '.txt'!")
+
+    def test_file_existence(self):
+        with self.assertRaises(SystemExit) as e:
+            check_args(self.proper_args)
+        self.assertEqual(e.exception.__str__(),
+                         f"ArgumentError: File: '{self.proper_args[2]}' with initial board "
+                         f"does not exist in '/data/' directory!")
 
 
 class BoardTestCase(unittest.TestCase):
