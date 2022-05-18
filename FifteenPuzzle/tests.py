@@ -118,24 +118,24 @@ class BoardTestCase(unittest.TestCase):
 
     def test_get_empty_cell(self):
         board = Board(self.initial_board)
-        self.assertEqual(board.get_empty_cell(), (0, 0))
+        self.assertEqual(board.get_xy(0), (0, 0))
 
     # tests moves that should return proper board copy
     def test_move_good(self):
         b = Board(self.initial_board)  # empty cell is in top left corner
-        row, col = b.get_empty_cell()
+        row, col = b.get_xy(0)
 
         b.board = b.move('D')
-        self.assertEqual(b.get_empty_cell(), (row + 1, col))
+        self.assertEqual(b.get_xy(0), (row + 1, col))
 
         b.board = b.move('R')
-        self.assertEqual(b.get_empty_cell(), (row + 1, col + 1))
+        self.assertEqual(b.get_xy(0), (row + 1, col + 1))
 
         b.board = b.move('U')
-        self.assertEqual(b.get_empty_cell(), (row, col + 1))
+        self.assertEqual(b.get_xy(0), (row, col + 1))
 
         b.board = b.move('L')
-        self.assertEqual(b.get_empty_cell(), (row, col))
+        self.assertEqual(b.get_xy(0), (row, col))
 
     # tests moves that should return False
     def test_move_bad(self):
