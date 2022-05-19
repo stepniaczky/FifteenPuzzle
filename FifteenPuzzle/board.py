@@ -1,6 +1,10 @@
+import copy
+
+
 class Board:
 
     def __init__(self, initial: list):
+        self.initial_list = initial
         self.r, self.c = list(map(int, initial[0].split()))  # number of rows and columns
         self.SIZE = self.r * self.c  # number of elements in board
         self.board = [list(map(int, row.split())) for row in initial[1:]]  # board list with integer values
@@ -52,18 +56,12 @@ class Board:
         except AssertionError:
             return False
 
-    # returns tuple of row and column index of empty cell in board
-    def get_empty_cell(self) -> tuple:
-        for i, row in enumerate(self.board):
-            if 0 in row:
-                return i, row.index(0)
-
     # checks if moving empty cell in given direction is possible
     # if so it returns copy of board with appropriate shift
     # if it is not possible, method returns False
     def move(self, direction: str) -> bool or list:
-        b = self.board.copy()
-        row, col = self.get_empty_cell()
+        b = copy.deepcopy(self.board)
+        row, col = self.get_xy(0)
         try:
             match direction:
                 case 'U':
@@ -80,15 +78,34 @@ class Board:
                     b[row][col], b[row][col - 1] = b[row][col - 1], b[row][col]
                 case _:
                     return False
-            return b  # if move passed correctly return copy of board with given shift
+            moved_board = self.__copy__()
+            moved_board.board = b
+            return moved_board  # if move passed correctly return copy of board with given shift
         except IndexError:
             return False
 
+    # prints board
     def __str__(self) -> str:
         s = ''
         for row in self.board:
-            for col in row:
+            for i, col in enumerate(row):
                 s += f'  {col} ' if col < 10 else f' {col} '
-                if (col + 1) % 4 == 0:
+                if (i + 1) % self.r == 0:
                     s += '\n'
         return s
+
+    # returns string
+    def __repr__(self):
+        return f"Board({self.initial_list})"
+
+    # returns deep copy of this
+    def __copy__(self):
+        b = eval(self.__repr__())
+        b.board = self.board
+        return b
+
+    # returns row and column of given element in board
+    def get_xy(self, element: int) -> tuple:
+        for i, row in enumerate(self.board):
+            if element in row:
+                return i, row.index(element)
