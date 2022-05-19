@@ -10,6 +10,8 @@ class Board:
         self.board = [list(map(int, row.split())) for row in initial[1:]]  # board list with integer values
         self.check_dimensions()
         self.check_elements()
+        self.parent = None  # board state before last movement
+        self.movement = ''  # the direction to move parent board to current state
 
     # checks if every row and column of the given initial board has the same length
     # as integers written in the first line of the initial board file [rows columns]
