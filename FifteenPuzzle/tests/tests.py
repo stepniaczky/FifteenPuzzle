@@ -8,9 +8,9 @@ class CheckArgsCase(unittest.TestCase):
     proper_args = ['bfs', 'DLRU', 'test_board.txt', 'results.txt', 'info.txt']
 
     def test_proper_strategy(self):
-        open(f'data/files/{self.proper_args[2]}', 'a').close()
+        open(f'../data/files/{self.proper_args[2]}', 'a').close()
         self.assertIsNone(check_args(self.proper_args))
-        remove(f'data/files/{self.proper_args[2]}')
+        remove(f'../data/files/{self.proper_args[2]}')
 
     def test_wrong_strategy(self):
         args = self.proper_args.copy()
@@ -22,7 +22,7 @@ class CheckArgsCase(unittest.TestCase):
 
     def test_proper_parameters(self):
         args = self.proper_args.copy()
-        open(f'data/files/{args[2]}', 'a').close()
+        open(f'../data/files/{args[2]}', 'a').close()
         self.assertIsNone(check_args(args))
 
         args[0] = 'dfs'
@@ -33,7 +33,7 @@ class CheckArgsCase(unittest.TestCase):
         self.assertIsNone(check_args(args))
         args[1] = 'manh'
         self.assertIsNone(check_args(args))
-        remove(f'data/files/{args[2]}')
+        remove(f'../data/files/{args[2]}')
 
     def check_wrong_parameters(self, args):
         with self.assertRaises(SystemExit) as e:
@@ -43,7 +43,7 @@ class CheckArgsCase(unittest.TestCase):
 
     def test_wrong_parameters(self):
         args = self.proper_args.copy()
-        open(f'data/files/{args[2]}', 'a').close()
+        open(f'../data/files/{args[2]}', 'a').close()
         args[1] = 'manh'
         self.check_wrong_parameters(args)
 
@@ -59,7 +59,7 @@ class CheckArgsCase(unittest.TestCase):
         args[0] = 'astr'
         args[1] = 'LRDU'
         self.check_wrong_parameters(args)
-        remove(f'data/files/{args[2]}')
+        remove(f'../data/files/{args[2]}')
 
     def test_files_extension(self):
         args = self.proper_args.copy()
@@ -112,6 +112,17 @@ class BoardTestCase(unittest.TestCase):
             Board(b)  # should raise SystemExit
         self.assertEqual(e.exception.__str__(), 'BoardError: Board has duplicate element values!')
 
+    def test_correct_board_getter(self):
+        b = Board(self.initial_board)
+        self.assertFalse(b.is_solved())
+
+        b = b.get_correct_board()
+        self.assertTrue(b.is_solved())
+
+        b = Board(self.diff_dimension_board)
+        b = b.get_correct_board()
+        self.assertTrue(b.is_solved())
+
     def test_solved_correctly(self):
         board = Board(self.solved_board)
         self.assertTrue(board.is_solved())
@@ -157,30 +168,26 @@ class BoardTestCase(unittest.TestCase):
         b = b.move('D')
         self.assertTrue(b.is_solved())
 
-    def test_hamm_dist(self):
+    def test_copy(self):
+        b = Board(self.initial_board)
+        b = b.move('R')
+        d: Board = b.__copy__()
+        self.assertNotEqual(b, d)
+        self.assertEqual(b.board, d.board)
+        self.assertEqual(b.parent, d.parent)
+        self.assertEqual(b.movement, d.movement)
+
+        d = d.move('L')
+        self.assertNotEqual(b.board, d.board)
+
+    def test_get_dist(self):
         b = Board(self.initial_board)
         self.assertEqual(b.get_dist('hamm'), 16)
-
-        b = Board(self.solved_board)
-        self.assertEqual(b.get_dist('hamm'), 0)
-
-    def test_manh_dist(self):
-        b = Board(self.initial_board)
         self.assertEqual(b.get_dist('manh'), 24)
 
         b = Board(self.solved_board)
+        self.assertEqual(b.get_dist('hamm'), 0)
         self.assertEqual(b.get_dist('manh'), 0)
-
-    def test_correct_board_getter(self):
-        b = Board(self.initial_board)
-        self.assertFalse(b.is_solved())
-
-        b = b.get_correct_board()
-        self.assertTrue(b.is_solved())
-
-        b = Board(self.diff_dimension_board)
-        b = b.get_correct_board()
-        self.assertTrue(b.is_solved())
 
 
 if __name__ == '__main__':

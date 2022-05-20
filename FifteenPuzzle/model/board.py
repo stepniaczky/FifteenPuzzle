@@ -11,10 +11,37 @@ class Board:
             self.board = [list(map(int, row.split())) for row in initial[1:]]  # board list with integer values
         except ValueError:
             quit("BoardError: File with initial board contains letters!")
+        except IndexError:
+            quit("BoardError: File with initial board is empty!")
         self.check_dimensions()
         self.check_elements()
         self.parent = None  # board state before last movement
         self.movement = ''  # the direction to move parent board to current state
+
+    # prints board
+    def __str__(self):
+        s = ''
+        for row in self.board:
+            for i, col in enumerate(row):
+                s += f'  {col} ' if col < 10 else f' {col} '
+                if (i + 1) % self.r == 0:
+                    s += '\n'
+        return s
+
+    # returns string
+    def __repr__(self):
+        return f"Board({self.initial_list})"
+
+    # returns deep copy of board object
+    def __copy__(self):
+        b = eval(self.__repr__())
+        b.board = copy.deepcopy(self.board)
+        b.parent = self.parent
+        b.movement = self.movement
+        return b
+
+    def __hash__(self):
+        return hash(str(self.board))
 
     # checks if every row and column of the given initial board has the same length
     # as integers written in the first line of the initial board file [rows columns]
@@ -46,20 +73,24 @@ class Board:
         except AssertionError as msg:
             quit(msg)
 
+    # returns row and column of given element in board
+    def get_xy(self, element: int) -> tuple:
+        for i, row in enumerate(self.board):
+            if element in row:
+                return i, row.index(element)
+
+    # returns correctly solved board with the same dimensions
+    def get_correct_board(self):
+        b = self.__copy__()
+        b.board = [[col for col in range(1 + (row * self.c), 1 + self.c + (row * self.c))] for row in range(self.r)]
+        b.board[self.r - 1][self.c - 1] = 0
+        return b
+
     # checks if board is solved correctly, which means that board elements
-    # starts with 1 then iterates one by one to 15 and the last element of board equals 0
+    # starts with 1 then iterates one by one to self.SIZE - 1 and the last element of board equals 0
     # returns True if board is solved, else False
     def is_solved(self) -> bool:
-        try:
-            for row_id, row in enumerate(self.board):
-                for i, element in enumerate(row, start=(row_id * self.r + 1)):
-                    if i == self.SIZE:
-                        assert element == 0
-                        break  # after checking all elements break and return True
-                    assert element == i
-            return True
-        except AssertionError:
-            return False
+        return self.board == self.get_correct_board().board
 
     # checks if moving empty cell in given direction is possible
     # if so it returns copy of board with appropriate shift
@@ -89,47 +120,14 @@ class Board:
         except IndexError:
             return False
 
-    # prints board
-    def __str__(self):
-        s = ''
-        for row in self.board:
-            for i, col in enumerate(row):
-                s += f'  {col} ' if col < 10 else f' {col} '
-                if (i + 1) % self.r == 0:
-                    s += '\n'
-        return s
-
-    # returns string
-    def __repr__(self):
-        return f"Board({self.initial_list})"
-
-    # returns deep copy of this
-    def __copy__(self):
-        b = eval(self.__repr__())
-        b.board = self.board
-        return b
-
-    def __hash__(self):
-        return hash(str(self.board))
-
-    # returns row and column of given element in board
-    def get_xy(self, element: int) -> tuple:
-        for i, row in enumerate(self.board):
-            if element in row:
-                return i, row.index(element)
-
+    # returns distance in the given metric
     def get_dist(self, metric_name: str) -> int:
         if metric_name == 'hamm':
             return self.__hamm_dist()
         else:
             return self.__manh_dist()
 
-    def get_correct_board(self):
-        b = self.__copy__()
-        b.board = [[col for col in range(1 + (row * self.c), 1 + self.c + (row * self.c))] for row in range(self.r)]
-        b.board[self.r - 1][self.c - 1] = 0
-        return b
-
+    # returns hamming distance between board cells and their correctly indexes
     def __hamm_dist(self) -> int:
         dist = 0
 
@@ -142,6 +140,7 @@ class Board:
                 elif col != (i - 1) * self.c + j:
                     dist += 1
 
+    # returns manhattan distance between board cells and their correctly indexes (skipping zero element)
     def __manh_dist(self) -> int:
         dist = 0
         for row in range(self.r):
