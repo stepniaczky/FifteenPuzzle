@@ -5,9 +5,12 @@ class Board:
 
     def __init__(self, initial: list):
         self.initial_list = initial
-        self.r, self.c = list(map(int, initial[0].split()))  # number of rows and columns
-        self.SIZE = self.r * self.c  # number of elements in board
-        self.board = [list(map(int, row.split())) for row in initial[1:]]  # board list with integer values
+        try:
+            self.r, self.c = list(map(int, initial[0].split()))  # number of rows and columns
+            self.SIZE = self.r * self.c  # number of elements in board
+            self.board = [list(map(int, row.split())) for row in initial[1:]]  # board list with integer values
+        except ValueError:
+            quit("BoardError: File with initial board contains letters!")
         self.check_dimensions()
         self.check_elements()
         self.parent = None  # board state before last movement
