@@ -106,6 +106,9 @@ class Board:
         b.board = self.board
         return b
 
+    def __hash__(self):
+        return hash(str(self.board))
+
     # returns row and column of given element in board
     def get_xy(self, element: int) -> tuple:
         for i, row in enumerate(self.board):
@@ -117,6 +120,12 @@ class Board:
             return self.__hamm_dist()
         else:
             return self.__manh_dist()
+
+    def get_correct_board(self):
+        b = self.__copy__()
+        b.board = [[col for col in range(1 + (row * self.c), 1 + self.c + (row * self.c))] for row in range(self.r)]
+        b.board[self.r - 1][self.c - 1] = 0
+        return b
 
     def __hamm_dist(self) -> int:
         dist = 0

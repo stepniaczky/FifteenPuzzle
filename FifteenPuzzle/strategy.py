@@ -52,12 +52,12 @@ class Strategy(ABC):
 
     # if actual board state exists in given directory, adds 1 to its frequency
     # else adds actual board state to given directory with initial value of 1
-    def set_rec_dict(self, recursion_lvl: dict, position: str):
-        if position in recursion_lvl.keys():
-            recursion_lvl[position] += 1
+    def set_rec_dict(self, recursion_lvl: dict, key: int):
+        if key in recursion_lvl.keys():
+            recursion_lvl[key] += 1
         else:
-            recursion_lvl[position] = 1
-        self.max_recursion_reached = max(recursion_lvl[position], self.max_recursion_reached)
+            recursion_lvl[key] = 1
+        self.max_recursion_reached = max(recursion_lvl[key], self.max_recursion_reached)
 
 
 # Depth First Search
@@ -70,6 +70,7 @@ class DFS(Strategy):
 
     def solve(self, board):
         timer = time_ns()  # starting timer
+        self.visited_list.append(board.__hash__())
         end_node: Board = self.__dfs(board, 1)
 
         # when solving process is done, saves solving time
@@ -92,7 +93,7 @@ class DFS(Strategy):
         if node in self.visited_list:
             return None
         else:
-            self.visited_list.append(node)
+            self.visited_list.append(node.__hash__())
 
         if node.is_solved():
             return node
@@ -119,7 +120,7 @@ class BFS(Strategy):
         visited = [str(board.board)]
         is_solved = False
         end_node: Board = board
-        self.set_rec_dict(recursion_lvl, str(board.board))
+        self.set_rec_dict(recursion_lvl, board.__hash__())
 
         while queue:
             node = queue.pop(0)
@@ -138,7 +139,7 @@ class BFS(Strategy):
                 if str(neighbour.board) not in visited:
                     queue.append(neighbour)
                     visited.append(neighbour)
-                    self.set_rec_dict(recursion_lvl, str(neighbour.board))
+                    self.set_rec_dict(recursion_lvl, neighbour.__hash__())
 
         # when solving process is done, saves solving time
         self.elapsed_time = (time_ns() - timer) / (10 ** 6)  # nanoseconds to milliseconds
@@ -159,7 +160,7 @@ class ASTR(Strategy):
     def solve(self, board):
         timer = time_ns()  # starting timer
         node: Board = board
-        visited = [str(board.board)]
+        visited = [board.__hash__()]
         queue = [0, board]
 
         while queue:
@@ -170,8 +171,8 @@ class ASTR(Strategy):
 
             neighbors = self.get_neighbourhood(node)
             for neighbour in neighbors:
-                if str(neighbour.board) not in visited:
-                    visited.append(str(neighbour.board))
+                if neighbour.__hash__() not in visited:
+                    visited.append(neighbour.__hash__())
                 else:
                     neighbors.remove(neighbour)
                     queue = [-1, None]
