@@ -26,10 +26,6 @@ class Strategy(ABC):
         return [self.path_length, self.visited, self.processed,
                 self.max_recursion_reached, round(self.elapsed_time, 3)]
 
-    @abstractmethod
-    def solve(self, board):
-        pass
-
     # returns neighbourhood of actual empty cell position
     def get_neighbourhood(self, parent: Board) -> list:
         neighbourhood = []
@@ -57,3 +53,7 @@ class Strategy(ABC):
         else:
             recursion_lvl[key] = 1
         self.max_recursion_reached = max(recursion_lvl[key], self.max_recursion_reached)
+
+    @abstractmethod
+    def solve(self, board):
+        pass

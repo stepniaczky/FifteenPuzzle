@@ -19,7 +19,7 @@ class BFS(Strategy):
             node = queue.pop(0)
             self.processed += 1
 
-            position = str(node.board)
+            position = node.__hash__()
             if recursion_lvl[position] > self.MAX_RECURSION:
                 break
 

@@ -23,7 +23,8 @@ class ASTR(Strategy):
                     visited.append(neighbour.__hash__())
                 else:
                     neighbors.remove(neighbour)
-                    queue = [-1, None]
+            else:
+                queue = [-1, None]
             node = sorted(neighbors, key=lambda x: x.get_dist(self.parameter))[0]
             h = node.get_dist(self.parameter) + queue[0]
             queue = [h, node]
