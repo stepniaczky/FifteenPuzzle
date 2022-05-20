@@ -87,7 +87,7 @@ class Board:
             return False
 
     # prints board
-    def __str__(self) -> str:
+    def __str__(self):
         s = ''
         for row in self.board:
             for i, col in enumerate(row):
@@ -111,3 +111,34 @@ class Board:
         for i, row in enumerate(self.board):
             if element in row:
                 return i, row.index(element)
+
+    def get_dist(self, metric_name: str) -> int:
+        if metric_name == 'hamm':
+            return self.__hamm_dist()
+        else:
+            return self.__manh_dist()
+
+    def __hamm_dist(self) -> int:
+        dist = 0
+
+        for i, row in enumerate(self.board, start=1):
+            for j, col in enumerate(row, start=1):
+
+                if i * j == self.SIZE:
+                    return dist if col == 0 else dist + 1
+
+                elif col != (i - 1) * self.c + j:
+                    dist += 1
+
+    def __manh_dist(self) -> int:
+        dist = 0
+        for row in range(self.r):
+            for col in range(self.c):
+
+                if (value := self.board[row][col]) != 0:
+                    value -= 1
+                    x = value % self.c
+                    y = value // self.r
+                    dist += abs(x - col) + abs(y - row)
+
+        return dist

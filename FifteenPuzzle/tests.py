@@ -79,6 +79,7 @@ class CheckArgsCase(unittest.TestCase):
 class BoardTestCase(unittest.TestCase):
     initial_board = ['4 4', '0 1 2 3', '4 5 6 7', '8 9 10 11', '12 13 14 15']
     diff_dimension_board = ['3 3', '1 2 0', '4 5 3', '7 8 6']
+    solved_board = ['4 4', '1 2 3 4', '5 6 7 8', '9 10 11 12', '13 14 15 0']
 
     def test_init_good(self):
         self.assertTrue(Board(self.initial_board))
@@ -112,8 +113,7 @@ class BoardTestCase(unittest.TestCase):
         self.assertEqual(e.exception.__str__(), 'BoardError: Board has duplicate element values!')
 
     def test_solved_correctly(self):
-        b = ['4 4', '1 2 3 4', '5 6 7 8', '9 10 11 12', '13 14 15 0']
-        board = Board(b)
+        board = Board(self.solved_board)
         self.assertTrue(board.is_solved())
 
     def test_solved_incorrectly(self):
@@ -147,8 +147,7 @@ class BoardTestCase(unittest.TestCase):
         self.assertFalse(b1.move('U'))
         self.assertFalse(b1.move('L'))
 
-        bottom_right_corner = ['4 4', '1 2 3 4', '5 6 7 8', '9 10 11 12', '13 14 15 0']
-        b2 = Board(bottom_right_corner)
+        b2 = Board(self.solved_board)
         self.assertFalse(b2.move('D'))
         self.assertFalse(b2.move('R'))
 
@@ -157,6 +156,20 @@ class BoardTestCase(unittest.TestCase):
         b = b.move('D')
         b = b.move('D')
         self.assertTrue(b.is_solved())
+
+    def test_hamm_dist(self):
+        b = Board(self.initial_board)
+        self.assertEqual(b.get_dist('hamm'), 16)
+
+        b = Board(self.solved_board)
+        self.assertEqual(b.get_dist('hamm'), 0)
+
+    def test_manh_dist(self):
+        b = Board(self.initial_board)
+        self.assertEqual(b.get_dist('manh'), 24)
+
+        b = Board(self.solved_board)
+        self.assertEqual(b.get_dist('manh'), 0)
 
 
 if __name__ == '__main__':
