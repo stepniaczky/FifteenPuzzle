@@ -1,16 +1,16 @@
 from os import remove
 import unittest
-from board import Board
-from check_args import check_args
+from model.board import Board
+from data.check_args import check_args
 
 
 class CheckArgsCase(unittest.TestCase):
     proper_args = ['bfs', 'DLRU', 'test_board.txt', 'results.txt', 'info.txt']
 
     def test_proper_strategy(self):
-        open(f'data/{self.proper_args[2]}', 'a').close()
+        open(f'data/files/{self.proper_args[2]}', 'a').close()
         self.assertIsNone(check_args(self.proper_args))
-        remove(f'data/{self.proper_args[2]}')
+        remove(f'data/files/{self.proper_args[2]}')
 
     def test_wrong_strategy(self):
         args = self.proper_args.copy()
@@ -22,7 +22,7 @@ class CheckArgsCase(unittest.TestCase):
 
     def test_proper_parameters(self):
         args = self.proper_args.copy()
-        open(f'data/{args[2]}', 'a').close()
+        open(f'data/files/{args[2]}', 'a').close()
         self.assertIsNone(check_args(args))
 
         args[0] = 'dfs'
@@ -33,7 +33,7 @@ class CheckArgsCase(unittest.TestCase):
         self.assertIsNone(check_args(args))
         args[1] = 'manh'
         self.assertIsNone(check_args(args))
-        remove(f'data/{args[2]}')
+        remove(f'data/files/{args[2]}')
 
     def check_wrong_parameters(self, args):
         with self.assertRaises(SystemExit) as e:
@@ -43,7 +43,7 @@ class CheckArgsCase(unittest.TestCase):
 
     def test_wrong_parameters(self):
         args = self.proper_args.copy()
-        open(f'data/{args[2]}', 'a').close()
+        open(f'data/files/{args[2]}', 'a').close()
         args[1] = 'manh'
         self.check_wrong_parameters(args)
 
@@ -59,7 +59,7 @@ class CheckArgsCase(unittest.TestCase):
         args[0] = 'astr'
         args[1] = 'LRDU'
         self.check_wrong_parameters(args)
-        remove(f'data/{args[2]}')
+        remove(f'data/files/{args[2]}')
 
     def test_files_extension(self):
         args = self.proper_args.copy()
@@ -73,7 +73,7 @@ class CheckArgsCase(unittest.TestCase):
             check_args(self.proper_args)
         self.assertEqual(e.exception.__str__(),
                          f"ArgumentError: File: '{self.proper_args[2]}' with initial board "
-                         f"does not exist in '/data/' directory!")
+                         f"does not exist in '/data/files' directory!")
 
 
 class BoardTestCase(unittest.TestCase):
@@ -170,6 +170,17 @@ class BoardTestCase(unittest.TestCase):
 
         b = Board(self.solved_board)
         self.assertEqual(b.get_dist('manh'), 0)
+
+    def test_correct_board_getter(self):
+        b = Board(self.initial_board)
+        self.assertFalse(b.is_solved())
+
+        b = b.get_correct_board()
+        self.assertTrue(b.is_solved())
+
+        b = Board(self.diff_dimension_board)
+        b = b.get_correct_board()
+        self.assertTrue(b.is_solved())
 
 
 if __name__ == '__main__':

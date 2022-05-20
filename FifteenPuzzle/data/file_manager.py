@@ -1,5 +1,5 @@
 class FileManager:
-    DIR_TXT = 'data'
+    DIR_TXT = 'data/files'
     DIR_GRAPHS = 'data/graphs'
 
     def save(self, filename: str, _list: list):

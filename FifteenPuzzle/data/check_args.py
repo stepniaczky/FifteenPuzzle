@@ -32,9 +32,9 @@ def check_args(args):
             assert args[i].endswith('.txt'), \
                 f"ArgumentError: File name: '{args[i]}' must ends with '.txt'!"
 
-        # checks if initial board file exists in /data/ directory
-        assert exists(f'data/{args[2]}'), \
-            f"ArgumentError: File: '{args[2]}' with initial board does not exist in '/data/' directory!"
+        # checks if initial board file exists in /data/files directory
+        assert exists(f'data/files/{args[2]}'), \
+            f"ArgumentError: File: '{args[2]}' with initial board does not exist in '/data/files' directory!"
 
     # if anything went wrong, quits program with the appropriate message
     except AssertionError as msg:

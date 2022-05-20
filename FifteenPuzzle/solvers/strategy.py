@@ -1,0 +1,59 @@
+from abc import ABC, abstractmethod
+from model.board import Board
+
+
+class Strategy(ABC):
+    MAX_RECURSION = 20
+
+    def __init__(self, parameter):
+        self.parameter = parameter
+        self.path_length = 0
+        self.path = ''
+        self.visited = 0
+        self.processed = 0
+        self.max_recursion_reached = 0
+        self.elapsed_time = 0
+
+    # returns data required in the result file
+    def get_result(self) -> list:
+        if self.path_length >= 0:
+            return [self.path_length, self.path]
+        else:
+            return [self.path_length]
+
+    # returns data required in the additional info file
+    def get_info(self) -> list:
+        return [self.path_length, self.visited, self.processed,
+                self.max_recursion_reached, round(self.elapsed_time, 3)]
+
+    @abstractmethod
+    def solve(self, board):
+        pass
+
+    # returns neighbourhood of actual empty cell position
+    def get_neighbourhood(self, parent: Board) -> list:
+        neighbourhood = []
+        search_order = list
+
+        if self.parameter in ['manh', 'hamm']:
+            search_order = list('URDL')
+        else:
+            search_order = list(self.parameter)
+
+        for direction in search_order:
+            b = parent.move(direction)
+            if b is not False:
+                b.parent = parent
+                b.movement = direction
+                neighbourhood.append(b)
+
+        return neighbourhood
+
+    # if actual board state exists in given directory, adds 1 to its frequency
+    # else adds actual board state to given directory with initial value of 1
+    def set_rec_dict(self, recursion_lvl: dict, key: int):
+        if key in recursion_lvl.keys():
+            recursion_lvl[key] += 1
+        else:
+            recursion_lvl[key] = 1
+        self.max_recursion_reached = max(recursion_lvl[key], self.max_recursion_reached)

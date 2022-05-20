@@ -1,8 +1,8 @@
 import sys
-from check_args import check_args
-from board import Board
-from file_manager import FileManager
-from strategy import BFS, DFS, ASTR
+from data.check_args import check_args
+from model.board import Board
+from data.file_manager import FileManager
+from solvers.strategy import BFS, DFS, ASTR
 
 
 def strategy_choice(name: str, parameter: str):
