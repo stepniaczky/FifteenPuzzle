@@ -31,16 +31,19 @@ class Strategy(ABC):
         neighbourhood = []
         search_order = list
 
+        # if strategy equals astr, search_order variable gets random directions
+        # astr algorithm is based on the distances of next nodes and completely independent of directions
         if self.parameter in ['manh', 'hamm']:
             search_order = list('URDL')
         else:
             search_order = list(self.parameter)
 
+        # creates neighbourhood list that is based on strategy searching order
         for direction in search_order:
             b = parent.move(direction)
             if b is not False:
-                b.parent = parent
-                b.movement = direction
+                b.parent = parent  # assigns parent to this node
+                b.movement = direction  # assigns direction of the parent shift to get this node
                 neighbourhood.append(b)
 
         return neighbourhood

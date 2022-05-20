@@ -1,16 +1,21 @@
-from os import remove
+from os import remove, chdir
 import unittest
 from model.board import Board
 from data.check_args import check_args
+from solvers.dfs import DFS
+from solvers.bfs import BFS
+from solvers.astr import ASTR
 
 
 class CheckArgsCase(unittest.TestCase):
     proper_args = ['bfs', 'DLRU', 'test_board.txt', 'results.txt', 'info.txt']
 
     def test_proper_strategy(self):
-        open(f'../data/files/{self.proper_args[2]}', 'a').close()
+        chdir('../')
+        open(f'data/files/{self.proper_args[2]}', 'a').close()
         self.assertIsNone(check_args(self.proper_args))
-        remove(f'../data/files/{self.proper_args[2]}')
+        remove(f'data/files/{self.proper_args[2]}')
+        chdir('tests')
 
     def test_wrong_strategy(self):
         args = self.proper_args.copy()
@@ -22,7 +27,8 @@ class CheckArgsCase(unittest.TestCase):
 
     def test_proper_parameters(self):
         args = self.proper_args.copy()
-        open(f'../data/files/{args[2]}', 'a').close()
+        chdir('../')
+        open(f'data/files/{args[2]}', 'a').close()
         self.assertIsNone(check_args(args))
 
         args[0] = 'dfs'
@@ -33,7 +39,8 @@ class CheckArgsCase(unittest.TestCase):
         self.assertIsNone(check_args(args))
         args[1] = 'manh'
         self.assertIsNone(check_args(args))
-        remove(f'../data/files/{args[2]}')
+        remove(f'data/files/{args[2]}')
+        chdir('tests')
 
     def check_wrong_parameters(self, args):
         with self.assertRaises(SystemExit) as e:
@@ -42,8 +49,9 @@ class CheckArgsCase(unittest.TestCase):
                          f"ArgumentError: Strategy: '{args[0]}' cannot be used with parameter: '{args[1]}'!")
 
     def test_wrong_parameters(self):
+        chdir('../')
         args = self.proper_args.copy()
-        open(f'../data/files/{args[2]}', 'a').close()
+        open(f'data/files/{args[2]}', 'a').close()
         args[1] = 'manh'
         self.check_wrong_parameters(args)
 
@@ -59,7 +67,8 @@ class CheckArgsCase(unittest.TestCase):
         args[0] = 'astr'
         args[1] = 'LRDU'
         self.check_wrong_parameters(args)
-        remove(f'../data/files/{args[2]}')
+        remove(f'data/files/{args[2]}')
+        chdir('tests')
 
     def test_files_extension(self):
         args = self.proper_args.copy()
@@ -188,6 +197,49 @@ class BoardTestCase(unittest.TestCase):
         b = Board(self.solved_board)
         self.assertEqual(b.get_dist('hamm'), 0)
         self.assertEqual(b.get_dist('manh'), 0)
+
+
+class StrategyCase(unittest.TestCase):
+    initial_board = ['4 4', '1 5 3 4', '2 0 6 7', '8 9 10 11', '12 13 14 15']
+
+    def test_neighbourhood_getter(self):
+        b = Board(self.initial_board)
+        solver = BFS('URDL')
+
+        test_neighbourhood = [b.move('U'), b.move('R'), b.move('D'), b.move('L')]
+        for i, neighbour in enumerate(solver.get_neighbourhood(b)):
+            self.assertEqual(str(neighbour), str(test_neighbourhood[i]))
+
+    def test_rec_dict_setter(self):
+        b = Board(self.initial_board)
+        _dict = {}
+        solver = DFS('URDL')
+
+        solver.set_rec_dict(_dict, hash(b))
+        self.assertEqual(_dict[hash(b)], 1)
+        solver.set_rec_dict(_dict, hash(b))
+        self.assertEqual(_dict[hash(b)], 2)
+
+    def test_result_getter(self):
+        board = ['4 4', '1 2 3 0', '5 6 7 4', '9 10 11 8', '13 14 15 12']
+        b = Board(board)
+        solver = ASTR('hamm')
+
+        solver.solve(b)
+        result = solver.get_result()
+        self.assertEqual([3, 'DDD'], result)
+
+    def test_info_getter(self):
+        board = ['4 4', '1 2 3 0', '5 6 7 4', '9 10 11 8', '13 14 15 12']
+        b = Board(board)
+        solver = ASTR('manh')
+
+        solver.solve(b)
+        info = solver.get_info()
+        self.assertEqual([3, 5, 4, 0, round(solver.elapsed_time, 3)], info)
+
+    def test_solve(self):
+        ...
 
 
 if __name__ == '__main__':
