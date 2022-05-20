@@ -78,9 +78,13 @@ class CheckArgsCase(unittest.TestCase):
 
 class BoardTestCase(unittest.TestCase):
     initial_board = ['4 4', '0 1 2 3', '4 5 6 7', '8 9 10 11', '12 13 14 15']
+    diff_dimension_board = ['3 3', '1 2 0', '4 5 3', '7 8 6']
 
     def test_init_good(self):
         self.assertTrue(Board(self.initial_board))
+
+    def test_init_diff_dimensions(self):
+        self.assertTrue(Board(self.diff_dimension_board))
 
     def test_init_incorrect_dimensions(self):
         b = self.initial_board.copy()
@@ -125,16 +129,16 @@ class BoardTestCase(unittest.TestCase):
         b = Board(self.initial_board)  # empty cell is in top left corner
         row, col = b.get_xy(0)
 
-        b.board = b.move('D')
+        b = b.move('D')
         self.assertEqual(b.get_xy(0), (row + 1, col))
 
-        b.board = b.move('R')
+        b = b.move('R')
         self.assertEqual(b.get_xy(0), (row + 1, col + 1))
 
-        b.board = b.move('U')
+        b = b.move('U')
         self.assertEqual(b.get_xy(0), (row, col + 1))
 
-        b.board = b.move('L')
+        b = b.move('L')
         self.assertEqual(b.get_xy(0), (row, col))
 
     # tests moves that should return False
@@ -147,6 +151,12 @@ class BoardTestCase(unittest.TestCase):
         b2 = Board(bottom_right_corner)
         self.assertFalse(b2.move('D'))
         self.assertFalse(b2.move('R'))
+
+    def test_diff_dimension_solved(self):
+        b = Board(self.diff_dimension_board)
+        b = b.move('D')
+        b = b.move('D')
+        self.assertTrue(b.is_solved())
 
 
 if __name__ == '__main__':

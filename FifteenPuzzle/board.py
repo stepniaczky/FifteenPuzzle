@@ -49,7 +49,7 @@ class Board:
     def is_solved(self) -> bool:
         try:
             for row_id, row in enumerate(self.board):
-                for i, element in enumerate(row, start=(row_id * 4 + 1)):
+                for i, element in enumerate(row, start=(row_id * self.r + 1)):
                     if i == self.SIZE:
                         assert element == 0
                         break  # after checking all elements break and return True
