@@ -66,16 +66,60 @@ class Strategy(ABC):
         self.max_recursion_reached = max(recursion_lvl[position], self.max_recursion_reached)
 
 
+# Depth First Search
 class DFS(Strategy):
 
+    def __init__(self, parameter):
+        super().__init__(parameter)
+        self.visited_list = []
+        self.break_flag = False
+
     def solve(self, board):
-        pass
+        timer = time_ns()  # starting timer
+        end_node: Board = self.__dfs(board, 1)
+
+        # when solving process is done, saves solving time
+        self.elapsed_time = (time_ns() - timer) / (10 ** 6)  # nanoseconds to milliseconds
+        self.visited = len(self.visited_list)
+        if self.break_flag is False:
+            s = ''
+            while end_node.parent is not None:
+                s = end_node.movement + s
+                end_node = end_node.parent
+            self.path = s
+            self.path_length = len(self.path)
+        else:
+            self.path_length = -1
+
+    def __dfs(self, node: Board, rec_lvl: int):
+        if self.break_flag is True:
+            return None
+
+        if node in self.visited_list:
+            return None
+        else:
+            self.visited_list.append(node)
+
+        if node.is_solved():
+            return node
+
+        self.recursion = max(self.max_recursion_reached, rec_lvl)
+        if rec_lvl > self.MAX_RECURSION:
+            self.break_flag = True
+            return None
+
+        for neighbour in self.get_neighbourhood(node):
+            self.processed += 1
+            neighbour_board = self.__dfs(neighbour, rec_lvl + 1)
+            if neighbour_board is not None:
+                return neighbour_board
 
 
+# Breadth First Search
 class BFS(Strategy):
 
     def solve(self, board):
-        timer = time_ns()
+        timer = time_ns()  # starting timer
         queue = [board]
         recursion_lvl = {}
         visited = []
@@ -102,7 +146,7 @@ class BFS(Strategy):
                     visited.append(neighbour)
                     self.set_rec_dict(recursion_lvl, str(neighbour.board))
 
-        # when solving process is done
+        # when solving process is done, saves solving time
         self.elapsed_time = (time_ns() - timer) / (10 ** 6)  # nanoseconds to milliseconds
         self.visited = len(visited)
         if is_solved is True:
