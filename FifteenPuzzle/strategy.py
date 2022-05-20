@@ -31,21 +31,15 @@ class Strategy(ABC):
     def solve(self, board):
         pass
 
-    # @staticmethod
-    # def prevent_going_backward(last_move: str) -> str:
-    #     if last_move == '':
-    #         return ''
-    #     all_moves = ['U', 'R', 'D', 'L']
-    #     i = all_moves.index(last_move)
-    #     if i < 2:
-    #         return all_moves[i + 2]
-    #     else:
-    #         return all_moves[i - 2]
-
     # returns neighbourhood of actual empty cell position
     def get_neighbourhood(self, parent: Board) -> list:
         neighbourhood = []
-        search_order = list(self.parameter)
+        search_order = list
+
+        if self.parameter in ['manh', 'hamm']:
+            search_order = list('URDL')
+        else:
+            search_order = list(self.parameter)
 
         for direction in search_order:
             b = parent.move(direction)
@@ -122,7 +116,7 @@ class BFS(Strategy):
         timer = time_ns()  # starting timer
         queue = [board]
         recursion_lvl = {}
-        visited = []
+        visited = [str(board.board)]
         is_solved = False
         end_node: Board = board
         self.set_rec_dict(recursion_lvl, str(board.board))
@@ -163,4 +157,38 @@ class BFS(Strategy):
 class ASTR(Strategy):
 
     def solve(self, board):
-        pass
+        timer = time_ns()  # starting timer
+        node: Board = board
+        visited = [str(board.board)]
+        queue = [0, board]
+
+        while queue:
+            self.processed += 1
+
+            if node.is_solved():
+                break
+
+            neighbors = self.get_neighbourhood(node)
+            for neighbour in neighbors:
+                if str(neighbour.board) not in visited:
+                    visited.append(str(neighbour.board))
+                else:
+                    neighbors.remove(neighbour)
+                    queue = [-1, None]
+            node = sorted(neighbors, key=lambda x: x.get_dist(self.parameter))[0]
+            h = node.get_dist(self.parameter) + queue[0]
+            queue = [h, node]
+
+        # when solving process is done, saves solving time
+        self.elapsed_time = (time_ns() - timer) / (10 ** 6)  # nanoseconds to milliseconds
+        self.visited = len(visited)
+
+        if queue[1] is not None:
+            s = ''
+            while node.parent is not None:
+                s = node.movement + s
+                node = node.parent
+            self.path = s
+            self.path_length = len(self.path)
+        else:
+            self.path_length = -1
