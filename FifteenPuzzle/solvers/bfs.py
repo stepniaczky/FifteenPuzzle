@@ -13,13 +13,13 @@ class BFS(Strategy):
         visited = [str(board.board)]
         is_solved = False
         end_node: Board = board
-        self.set_rec_dict(recursion_lvl, board.__hash__())
+        self.set_rec_dict(recursion_lvl, hash(board))
 
         while queue:
             node = queue.pop(0)
             self.processed += 1
 
-            position = node.__hash__()
+            position = hash(node)
             if recursion_lvl[position] > self.MAX_RECURSION:
                 break
 
@@ -32,7 +32,7 @@ class BFS(Strategy):
                 if str(neighbour.board) not in visited:
                     queue.append(neighbour)
                     visited.append(neighbour)
-                    self.set_rec_dict(recursion_lvl, neighbour.__hash__())
+                    self.set_rec_dict(recursion_lvl, hash(neighbour))
 
         # when solving process is done, saves solving time
         self.elapsed_time = (time_ns() - timer) / (10 ** 6)  # nanoseconds to milliseconds

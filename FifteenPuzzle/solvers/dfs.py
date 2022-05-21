@@ -13,7 +13,7 @@ class DFS(Strategy):
 
     def solve(self, board):
         timer = time_ns()  # starting timer
-        self.visited_list.append(board.__hash__())
+        self.visited_list.append(hash(board))
         end_node: Board = self.__dfs(board, 1)
 
         # when solving process is done, saves solving time
@@ -36,7 +36,7 @@ class DFS(Strategy):
         if node in self.visited_list:
             return None
         else:
-            self.visited_list.append(node.__hash__())
+            self.visited_list.append(hash(node))
 
         if node.is_solved():
             return node
