@@ -8,12 +8,12 @@ class BFS(Strategy):
 
     def solve(self, board):
         timer = time_ns()  # starting timer
-        queue = [board]
-        recursion_lvl = {}
-        visited = [hash(board)]
         is_solved = False
         node: Board = board
-        # self.set_rec_dict(recursion_lvl, hash(board))
+
+        queue = [board]
+        recursion_lvl = {}
+        expanded = [hash(board)]
         recursion_lvl[hash(board)] = 0
 
         while queue:
@@ -30,15 +30,14 @@ class BFS(Strategy):
                 break
 
             for neighbour in self.get_neighbourhood(node):
-                if hash(neighbour) not in visited:
+                if hash(neighbour) not in expanded:
                     queue.append(neighbour)
-                    visited.append(hash(neighbour))
-                    # self.set_rec_dict(recursion_lvl, hash(neighbour))
+                    expanded.append(hash(neighbour))
                     recursion_lvl[hash(neighbour)] = lvl + 1
 
         # when solving process is done, saves solving time
         self.elapsed_time = (time_ns() - timer) / (10 ** 6)  # nanoseconds to milliseconds
-        self.visited = len(visited)
+        self.visited = len(expanded)
         if is_solved is True:
             s = ''
             while node.parent is not None:
