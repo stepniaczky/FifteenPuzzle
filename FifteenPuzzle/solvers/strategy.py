@@ -48,15 +48,6 @@ class Strategy(ABC):
 
         return neighbourhood
 
-    # if actual board state exists in given directory, adds 1 to its frequency
-    # else adds actual board state to given directory with initial value of 1
-    def set_rec_dict(self, recursion_lvl: dict, key: int):
-        if key in recursion_lvl.keys():
-            recursion_lvl[key] += 1
-        else:
-            recursion_lvl[key] = 1
-        self.max_recursion_reached = max(recursion_lvl[key], self.max_recursion_reached)
-
     @abstractmethod
     def solve(self, board):
         pass
