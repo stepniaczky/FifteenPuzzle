@@ -1,4 +1,4 @@
-import sqlite3
+from queue import PriorityQueue
 from time import time_ns
 from solvers.strategy import Strategy
 from model.board import Board
@@ -8,37 +8,42 @@ from model.board import Board
 class ASTR(Strategy):
 
     def solve(self, board: Board):
+        node = board
         timer = time_ns()  # starting timer
-        node: Board = board
-        visited = [hash(board)]
-        queue = [(0, board)]
+        expanded = [hash(board)]
+
+        queue = PriorityQueue()
+        queue.put((0, board))
 
         while queue:
-            (h, node) = queue.pop()
+            node = queue.get()[1]
             self.processed += 1
 
             if node.is_solved():
                 break
 
+            expanded.append(hash(node))
+
             neighbors = self.get_neighbourhood(node)
             new_nodes = []
             for neighbour in neighbors:
-                if hash(neighbour) not in visited:
-                    visited.append(hash(neighbour))
+                if hash(neighbour) not in expanded:
                     new_nodes.append(neighbour)
+                    neighbour.path_taken = node.steps + 1
+                    self.visited += 1
 
             if len(new_nodes) == 0:
+                node = None
                 break
 
-            nearest_node = sorted(new_nodes, key=lambda x: x.get_dist(self.parameter))[0]
-            h = node.get_dist(self.parameter) + h
-            queue.append((h, nearest_node))
+            for new_node in new_nodes:
+                h = new_node.get_dist(self.parameter) + new_node.steps
+                queue.put((h, new_node))
 
         # when solving process is done, saves solving time
         self.elapsed_time = (time_ns() - timer) / (10 ** 6)  # nanoseconds to milliseconds
-        self.visited = len(visited)
 
-        if queue is not None:
+        if node is not None:
             s = ''
             while node.parent is not None:
                 s = node.movement + s
