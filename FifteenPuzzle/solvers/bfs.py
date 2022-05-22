@@ -6,15 +6,17 @@ from model.board import Board
 # Breadth First Search
 class BFS(Strategy):
 
+    def __str__(self):
+        return "Breadth First Search"
+
     def solve(self, board):
         timer = time_ns()  # starting timer
         is_solved = False
         node: Board = board
 
-        queue = [board]
-        recursion_lvl = {}
         expanded = [hash(board)]
-        recursion_lvl[hash(board)] = 0
+        recursion_lvl = {hash(board): 0}
+        queue = [board]
 
         while queue:
             node = queue.pop(0)

@@ -6,6 +6,9 @@ from model.board import Board
 # Depth First Search
 class DFS(Strategy):
 
+    def __str__(self):
+        return "Depth First Search"
+
     def __init__(self, parameter: str):
         super().__init__(parameter)
         self.expanded = {}

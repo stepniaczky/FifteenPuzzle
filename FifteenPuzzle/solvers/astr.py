@@ -7,6 +7,9 @@ from model.board import Board
 # A* search
 class ASTR(Strategy):
 
+    def __str__(self):
+        return "A* search"
+
     def solve(self, board: Board):
         node = board
         timer = time_ns()  # starting timer
