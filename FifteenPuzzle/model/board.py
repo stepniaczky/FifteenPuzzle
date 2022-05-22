@@ -17,6 +17,7 @@ class Board:
         self.check_elements()
         self.parent = None  # board state before last movement
         self.movement = ''  # the direction to move parent board to current state
+        self.steps = 0
 
     # prints board
     def __str__(self):
@@ -40,8 +41,13 @@ class Board:
         b.movement = self.movement
         return b
 
+    # returns hash value of actual state of board
     def __hash__(self):
         return hash(str(self.board))
+
+    # required by Priority Queue in ASTR strategy for comparing elements in queue
+    def __lt__(self, other):
+        return True
 
     # checks if every row and column of the given initial board has the same length
     # as integers written in the first line of the initial board file [rows columns]
