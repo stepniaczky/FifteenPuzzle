@@ -1,5 +1,6 @@
-from os import remove, chdir
 import unittest
+from os import remove, chdir
+
 from model.board import Board
 from data.check_args import check_args
 from solvers.dfs import DFS
@@ -210,16 +211,6 @@ class StrategyCase(unittest.TestCase):
         for i, neighbour in enumerate(solver.get_neighbourhood(b)):
             self.assertEqual(str(neighbour), str(test_neighbourhood[i]))
 
-    def test_rec_dict_setter(self):
-        b = Board(self.initial_board)
-        _dict = {}
-        solver = DFS('URDL')
-
-        solver.set_rec_dict(_dict, hash(b))
-        self.assertEqual(_dict[hash(b)], 1)
-        solver.set_rec_dict(_dict, hash(b))
-        self.assertEqual(_dict[hash(b)], 2)
-
     def test_result_getter(self):
         board = ['4 4', '1 2 3 0', '5 6 7 4', '9 10 11 8', '13 14 15 12']
         b = Board(board)
@@ -236,7 +227,7 @@ class StrategyCase(unittest.TestCase):
 
         solver.solve(b)
         info = solver.get_info()
-        self.assertEqual([3, 5, 4, 0, round(solver.elapsed_time, 3)], info)
+        self.assertEqual([3, 6, 4, 0, round(solver.elapsed_time, 3)], info)
 
     def test_solve(self):
         ...
