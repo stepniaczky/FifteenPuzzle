@@ -229,9 +229,6 @@ class StrategyCase(unittest.TestCase):
         info = solver.get_info()
         self.assertEqual([3, 6, 4, 0, round(solver.elapsed_time, 3)], info)
 
-    def test_solve(self):
-        ...
-
 
 if __name__ == '__main__':
     unittest.main()
