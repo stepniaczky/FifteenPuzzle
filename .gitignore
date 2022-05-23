@@ -6,3 +6,6 @@
 
 # Python bytecode-compiled cache files
 **/__pycache__/
+
+# Python virtual environment
+env/
