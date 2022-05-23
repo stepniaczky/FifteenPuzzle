@@ -22,11 +22,18 @@ Tiles in the same row or column of the open position can be moved by sliding the
 <br />
 <img src="https://rosettacode.org/mw/images/thumb/7/79/15_puzzle.png/300px-15_puzzle.png" alt="An image that represents correctly solved puzzle" width="250" height="250"/>
 
-
+Finding a solution to this game comes down to searching the tree, where the root is the initial state of the board
+and the following vertices are child states resulted from performing the specified plate shift.
+Searching the indicated tree is carried out using 3 different strategies:
 
 ### Breadth First Search (BFS)
+It starts at the tree root and explores all nodes at the present depth, if it doesn't find a solution to the puzzle at the given level
+it is moving on to the nodes at the next depth level. Child nodes that were visited but not explored are stored in the FIFO queue.
+
 ### Depth First Search (DFS)
+
 ### A* Search (ASTR)
+
 
 Implementation description 
 -------
