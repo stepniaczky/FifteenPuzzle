@@ -1,9 +1,21 @@
-# Fifteen Puzzle
-The project was made for the Artificial Intelligence and Expert Systems course at Technical University of Lodz.
+Fifteen Puzzle
+======
 
-## Project goal
+* [Project goal](#project-goal)
+* [Introduction](#introduction)
+* [Implementation description](#implementation-description)
+* [What is needed to run the application](#what-is-needed-to-run-the-application)
+* [Results](#results)
+* [Conclusions](#conclusions)
+
+
+Project goal
+-------
 A console application that uses 3 different graph searching algorithms: DFS, BFS and A* in purpose of solving any initial form of a puzzle loaded from a file.
-## Introduction
+
+
+Introduction
+-------
 Fifteen is a puzzle game whose board with size of 4x4 consists of a randomly filled tiles with numbers from 1 to 15 and one empty field.
 Tiles in the same row or column of the open position can be moved by sliding them horizontally or vertically. The goal of the game is to set blocks in ascending order of numbers, just like the picture below:
 <br />
@@ -16,7 +28,19 @@ Tiles in the same row or column of the open position can be moved by sliding the
 ### Depth First Search (DFS)
 ### A* Search (ASTR)
 
-## Implementation description 
-## What is needed to run the application
-## Results
-## Conclusions
+Implementation description 
+-------
+
+
+What is needed to run the application
+-------
+
+
+Results
+-------
+
+
+Conclusions
+-------
+
+
